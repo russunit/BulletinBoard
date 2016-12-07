@@ -14,6 +14,7 @@ public class BBServer
     private ArrayList<ClientConnectionHandler> connections;
     private ArrayList<Message> messages;
     private ArrayList<User> users;
+    private ArrayList<User> loggedInUsers;
     
     private int maxClients = 10;
     
@@ -25,6 +26,7 @@ public class BBServer
         clientConnection = null;
         this.portNumber = portNumber;
         connections = new ArrayList<ClientConnectionHandler>();
+        loggedInUsers = new ArrayList<User>();
         
         loadDatabase();
         
@@ -38,7 +40,7 @@ public class BBServer
     public void acceptConnection() throws IOException
     {
         clientConnection = server.accept();
-        ClientConnectionHandler cch = new ClientConnectionHandler(clientConnection, this.users, this.messages);
+        ClientConnectionHandler cch = new ClientConnectionHandler(clientConnection, this.users, this.messages, this.loggedInUsers);
         
         if (checkActiveConnections() < maxClients)
         {
@@ -103,6 +105,16 @@ public class BBServer
         }
     }
     
+    public void getLoggedInUsers() throws IOException
+    {
+    	//TODO
+    }
+    
+    public void setLoggedInUsers() throws IOException
+    {
+    	//TODO
+    }
+    
     private void loadDatabase()
     {
     	//TODO this loads the users and messages from database.
@@ -164,11 +176,17 @@ public class BBServer
                 //watch for new users
                 BBS.getUsers();
                 
+                //watch for logged in users
+                BBS.getLoggedInUsers();
+                
                 //update all clients' messageList
                 BBS.setMessages();
                 
                 //update all clients' userList
                 BBS.setUsers();
+                
+                //update all clients' loggedInUserList
+                BBS.setLoggedInUsers();
                 
                 //update the database
                 BBS.updateDatabase();

@@ -30,6 +30,8 @@ public class ClientConnectionHandler extends Thread {
 	private ArrayList<User> userList;
 	private ArrayList<Message> messageList;
 	
+	private ArrayList<User> loggedInUserList;
+	
 	private Socket connection;
     private InputStream clientInput;
     private OutputStream clientOutput;
@@ -50,10 +52,11 @@ public class ClientConnectionHandler extends Thread {
     private int displaySize = 0;
     private boolean validChoice = false;
 
-	public ClientConnectionHandler(Socket clientConnection, ArrayList<User> uL, ArrayList<Message> mL) 
+	public ClientConnectionHandler(Socket clientConnection, ArrayList<User> uL, ArrayList<Message> mL, ArrayList<User> lIU) 
 	{
 		connection = clientConnection;
 		this.userList = uL;
+		this.loggedInUserList = lIU;
 		this.messageList = mL;
 		
 		this.newMessage = null;
@@ -421,6 +424,20 @@ public class ClientConnectionHandler extends Thread {
 		osw.flush();
 	}
 	
+	public int getLoggedInUserListSize()
+	{
+		return loggedInUserList.size();
+	}
+	
+	public void setLoggedInUserList(ArrayList<User> list)
+	{
+		this.loggedInUserList = list;
+	}
+	
+	public User getCurrentUser()
+	{
+		return this.currentUser;
+	}
 	
 	
 
