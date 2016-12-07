@@ -21,10 +21,12 @@ public class ClientConnectionHandler extends Thread {
 	
 	public boolean hasMessage;
 	public boolean hasNewUser;
+	public boolean hasLogout;
 	
 	
 	private User currentUser;
 	private User tempUser;
+	private User userToLogOut;
 	private boolean isLoggedIn;
 	
 	private ArrayList<User> userList;
@@ -301,6 +303,8 @@ public class ClientConnectionHandler extends Thread {
 		
 		if(isLoggedIn)
 		{
+			userToLogOut = currentUser;
+			hasLogout = true;
 			currentUser = null;
 			isLoggedIn = false;
 			osw.write("\r\nSigned out.\r\n");
@@ -437,6 +441,22 @@ public class ClientConnectionHandler extends Thread {
 	public User getCurrentUser()
 	{
 		return this.currentUser;
+	}
+	
+	public boolean hasLogout()
+	{
+		return hasLogout;
+	}
+	
+	public void clearLogout()
+	{
+		hasLogout = false;
+		userToLogOut = null;
+	}
+	
+	public User getUserToLogOut()
+	{
+		return userToLogOut;
 	}
 	
 	

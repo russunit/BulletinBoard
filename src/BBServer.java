@@ -107,12 +107,28 @@ public class BBServer
     
     public void getLoggedInUsers() throws IOException
     {
-    	//TODO
+    	//TODO this might be buggy.......... i hate using .contains, i will probably have to edit this.
+    	for (int i = 0; i < connections.size(); i++)
+        { 
+        	if(connections.get(i).isConnected())
+        	{
+        		if(!loggedInUsers.contains(connections.get(i).getCurrentUser()))
+        			loggedInUsers.add(connections.get(i).getCurrentUser());
+        		if(connections.get(i).hasLogout())
+        		{
+        			loggedInUsers.remove(loggedInUsers.indexOf(connections.get(i).getUserToLogOut()));
+        		}
+        	}
+        }
     }
     
     public void setLoggedInUsers() throws IOException
     {
-    	//TODO
+    	for (int i = 0; i < connections.size(); i++)
+        { 
+        	if(connections.get(i).isConnected())
+        		connections.get(i).setLoggedInUserList(loggedInUsers);
+        }
     }
     
     private void loadDatabase()
