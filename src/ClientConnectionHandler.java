@@ -106,6 +106,7 @@ public class ClientConnectionHandler extends Thread {
                 osw.write("4. Post Message\r\n");
                 osw.write("5. View recent messages\r\n");
                 osw.write("6. VIEW ALL USERS\r\n");
+                osw.write("7. VIEW ACTIVE USERS\r\n");
                 
                 osw.write("...Or type exit to quit.\r\n");
                 
@@ -126,6 +127,8 @@ public class ClientConnectionHandler extends Thread {
             	{viewMessagesOption();}
             	else if(option.equals("6"))
             	{viewAllUsersOption();}
+            	else if(option.equals("7"))
+            	{viewActiveUsersOption();}
             	else if(option.equalsIgnoreCase("exit"))
             	{exitOption();}
             	else
@@ -213,6 +216,20 @@ public class ClientConnectionHandler extends Thread {
 		return false;
 	}
 	
+	public boolean containsLoggedInUser(User u)
+	{
+		
+		System.out.println(loggedInUserList.size());
+		
+		
+		for(int x = 0; x < loggedInUserList.size(); x++)
+		{
+			if(u.nameMatches(loggedInUserList.get(x).name))
+				return true;
+		}
+		return false;
+	}
+	
 	public int getUserListSize()
 	{
 		return userList.size();
@@ -251,10 +268,16 @@ public class ClientConnectionHandler extends Thread {
     		uPass = scanner.nextLine();
     		
     		tempUser = new User (uName, uPass);
-    		if(containsUser(tempUser) && tempUser.passwordMatches(uPass))
+    		if(containsLoggedInUser(tempUser))
+    		{
+    			osw.write("\r\nSorry, "+tempUser.name+" is already logged in.\r\n");
+        		osw.flush();
+    		}
+    		else if(containsUser(tempUser) && tempUser.passwordMatches(uPass))
     		{
     			currentUser = tempUser;
     			isLoggedIn = true;
+    			loggedInUserList.add(currentUser);
     			osw.write("\r\nLogged in as "+currentUser.name+".\r\n");
         		osw.flush();
     		}
@@ -305,8 +328,11 @@ public class ClientConnectionHandler extends Thread {
 		{
 			userToLogOut = currentUser;
 			hasLogout = true;
-			currentUser = null;
 			isLoggedIn = false;
+			loggedInUserList.remove(loggedInUserList.indexOf(currentUser));
+			
+			currentUser = null;
+			
 			osw.write("\r\nSigned out.\r\n");
     		osw.flush();
 		}
@@ -412,6 +438,18 @@ public class ClientConnectionHandler extends Thread {
 		{
 			osw.write(userList.get(x).name + "\r\n");
 			osw.write(userList.get(x).password + "\r\n\r\n");
+
+		}
+	}
+	
+	public void viewActiveUsersOption() throws IOException
+	{
+		osw.write("LOGGED IN USERS:\r\n");
+		osw.flush();
+		for(int x = 0; x < loggedInUserList.size(); x++)
+		{
+			osw.write(loggedInUserList.get(x).name + "\r\n");
+			osw.write(loggedInUserList.get(x).password + "\r\n\r\n");
 
 		}
 	}

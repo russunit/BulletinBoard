@@ -107,16 +107,17 @@ public class BBServer
     
     public void getLoggedInUsers() throws IOException
     {
-    	//TODO this might be buggy.......... i hate using .contains, i will probably have to edit this.
+    	//TODO this might be buggy.......... i hate using .remove, i will probably have to edit this.
     	for (int i = 0; i < connections.size(); i++)
         { 
         	if(connections.get(i).isConnected())
         	{
-        		if(!loggedInUsers.contains(connections.get(i).getCurrentUser()))
+        		if((!containsLoggedInUser(connections.get(i).getCurrentUser())) && connections.get(i).getCurrentUser() != null)
         			loggedInUsers.add(connections.get(i).getCurrentUser());
         		if(connections.get(i).hasLogout())
         		{
         			loggedInUsers.remove(loggedInUsers.indexOf(connections.get(i).getUserToLogOut()));
+        			connections.get(i).clearLogout();
         		}
         	}
         }
@@ -167,6 +168,19 @@ public class BBServer
         		}
         }
     }
+    
+    public boolean containsLoggedInUser(User u)
+	{
+    	if(loggedInUsers.isEmpty())
+    		return false;
+    	
+		for(int x = 0; x < loggedInUsers.size(); x++)
+		{
+			if(u.nameMatches(loggedInUsers.get(x).name))
+				return true;
+		}
+		return false;
+	}
     
     
 
