@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class BBServer {
+public class BBServer 
+{
 	
 	private ServerSocket server;
     private Socket clientConnection;
     private ArrayList<ClientConnectionHandler> connections;
     private ArrayList<Message> messages;
+    private ArrayList<User> users;
     
     private int maxClients = 10;
     
@@ -23,7 +25,9 @@ public class BBServer {
         clientConnection = null;
         this.portNumber = portNumber;
         connections = new ArrayList<ClientConnectionHandler>();
-        messages = new ArrayList<Message>();
+        
+        loadDatabase();
+        
     }
     
     public void listen() throws IOException
@@ -34,7 +38,7 @@ public class BBServer {
     public void acceptConnection() throws IOException
     {
         clientConnection = server.accept();
-        ClientConnectionHandler cch = new ClientConnectionHandler(clientConnection);
+        ClientConnectionHandler cch = new ClientConnectionHandler(clientConnection, this.users, this.messages);
         
         if (checkActiveConnections() < maxClients)
         {
@@ -71,15 +75,78 @@ public class BBServer {
         return activeConnections;
     }
     
+    public void getMessages() throws IOException
+    {
+    	//ClientConnectionHandler cch = null;
+    	
+    	for (int i = 0; i < connections.size(); i++)
+        { 
+        	if(connections.get(i).isConnected())
+        		if(connections.get(i).hasMessage())
+        		{
+        			messages.add(connections.get(i).getMessage());
+        			connections.get(i).clearMessage();
+        		}
+        }
+    }
     
+    public void getUsers() throws IOException
+    {
+    	for (int i = 0; i < connections.size(); i++)
+        { 
+        	if(connections.get(i).isConnected())
+        		if(connections.get(i).hasNewUser())
+        		{
+        			users.add(connections.get(i).getNewUser());
+        			connections.get(i).clearNewUser();
+        		}
+        }
+    }
     
+    private void loadDatabase()
+    {
+    	//TODO this loads the users and messages from database.
+    	// for now, it will create empty lists.
+    	users = new ArrayList<User>();
+        messages = new ArrayList<Message>();
+    }
     
+    private void updateDatabase()
+    {
+    	//TODO this writes the current users and messages to database.
+    }
+    
+    private void setMessages() throws IOException
+    {
+    	for (int i = 0; i < connections.size(); i++)
+        { 
+        	if(connections.get(i).isConnected())
+        		if(connections.get(i).getMessageListSize() != this.messages.size())
+        		{
+        			connections.get(i).setMessageList(messages);
+        		}
+        }
+    }
+    
+    private void setUsers() throws IOException
+    {
+    	for (int i = 0; i < connections.size(); i++)
+        { 
+        	if(connections.get(i).isConnected())
+        		if(connections.get(i).getUserListSize() != this.users.size())
+        		{
+        			connections.get(i).setUserList(users);
+        		}
+        }
+    }
     
     
 
 	public static void main(String[] args) 
 	{
-		BBServer BBS = new BBServer(Integer.parseInt(args[0]));
+		//BBServer BBS = new BBServer(Integer.parseInt(args[0]));
+		BBServer BBS = new BBServer(666);
+		System.out.println("Bulletin Board Server Initialized");
 		
 		try
         {  
@@ -90,6 +157,21 @@ public class BBServer {
             {
                 //Wait until a client connects
                 BBS.acceptConnection();
+                
+                //watch for messages
+                BBS.getMessages();
+                
+                //watch for new users
+                BBS.getUsers();
+                
+                //update all clients' messageList
+                BBS.setMessages();
+                
+                //update all clients' userList
+                BBS.setUsers();
+                
+                //update the database
+                BBS.updateDatabase();
             }
             
             
