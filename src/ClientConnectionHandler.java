@@ -326,12 +326,7 @@ public class ClientConnectionHandler extends Thread {
 		
 		if(isLoggedIn)
 		{
-			userToLogOut = currentUser;
-			hasLogout = true;
-			isLoggedIn = false;
-			loggedInUserList.remove(loggedInUserList.indexOf(currentUser));
-			
-			currentUser = null;
+			logUserOut();
 			
 			osw.write("\r\nSigned out.\r\n");
     		osw.flush();
@@ -456,6 +451,7 @@ public class ClientConnectionHandler extends Thread {
 	
 	public void exitOption() throws IOException
 	{
+		logUserOut();
 		osw.write("Goodbye.\r\n");
 		osw.flush();
 	}
@@ -495,6 +491,16 @@ public class ClientConnectionHandler extends Thread {
 	public User getUserToLogOut()
 	{
 		return userToLogOut;
+	}
+	
+	public void logUserOut() throws IOException
+	{
+		userToLogOut = currentUser;
+		hasLogout = true;
+		isLoggedIn = false;
+		loggedInUserList.remove(loggedInUserList.indexOf(currentUser));
+		
+		currentUser = null;
 	}
 	
 	
