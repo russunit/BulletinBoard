@@ -94,7 +94,7 @@ public class ClientConnectionHandler extends Thread {
             //loop to continue asking options
             while(!option.equalsIgnoreCase("exit"))
             {
-            	osw.write("Please enter an option:\r\n");
+            	osw.write("\r\n\r\nPlease enter an option:\r\n");
                 osw.write("1. Log in\r\n");
                 osw.write("2. Sign up\r\n");
                 osw.write("3. Log out\r\n");
@@ -250,7 +250,7 @@ public class ClientConnectionHandler extends Thread {
     		{
     			currentUser = tempUser;
     			isLoggedIn = true;
-    			osw.write("\r\nLogged in as "+currentUser.name+".");
+    			osw.write("\r\nLogged in as "+currentUser.name+".\r\n");
         		osw.flush();
     		}
     		else

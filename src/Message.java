@@ -25,7 +25,7 @@ public class Message {
 	
 	public String displayString()
 	{
-		String s = "" + title + "\r\n" + topic + "\r\n" + author.name + "\r\n" + date.toString() + "\r\n------------\r\n" + content + "\r\n";
+		String s = "Title: " + title + "\r\nTopic: " + topic + "\r\nAuthor: " + author.name + "\r\nDate: " + date.toString() + "\r\n------------\r\n" + content + "\r\n";
 		return s;
 		
 	}
